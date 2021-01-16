@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Fizzler.Systems.HtmlAgilityPack;
 using WpfApplication1.Services;
 
 
@@ -71,10 +70,10 @@ namespace WpfApplication1.Models
                     Parser.QsAttr(pagination, "a.toggle-menu__item-link_bordered", "href")
                           ?.Substring(8).TrimEnd('/');
         
-            foreach(var item in document.QuerySelectorAll("article.post"))
+            foreach(var item in Parser.QsAll(document, "article.post"))
             {
                 var postHeader = Parser.Qs(item, "header.post__meta", true);
-                var postText = Parser.Qs(item, "div.post__text", true).QuerySelectorAll("p");
+                var postText = Parser.QsAll(Parser.Qs(item, "div.post__text", true), "p");
                 var description = postText.Aggregate("", (current, node) => current + "\n" + node.InnerHtml);
                 
                 News.Add(new NewsViewModel
