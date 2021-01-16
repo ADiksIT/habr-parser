@@ -1,4 +1,5 @@
-﻿using Fizzler.Systems.HtmlAgilityPack;
+﻿using System.Collections.Generic;
+using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
 
 namespace WpfApplication1.Services
@@ -53,6 +54,14 @@ namespace WpfApplication1.Services
         /// <returns>Html content of Attribute or "without data"</returns>
         public static string QsAttr(HtmlNode node, string selector, string attr) =>
             Qs(node, selector, true)?.Attributes[attr]?.Value ?? "without data";
-        
+
+        /// <summary>
+        /// Methods find all nodes bu selector
+        /// </summary>
+        /// <param name="node">Node being searched</param>
+        /// <param name="selector">The selector we're looking for</param>
+        /// <returns>Collection found nodes</returns>
+        public static IEnumerable<HtmlNode> QsAll(HtmlNode node, string selector) =>
+            node.QuerySelectorAll(selector);
     }
 }
