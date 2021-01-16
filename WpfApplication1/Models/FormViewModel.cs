@@ -1,19 +1,20 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Fizzler.Systems.HtmlAgilityPack;
-using HtmlAgilityPack;
+using WpfApplication1.Services;
 
 
 namespace WpfApplication1.Models
 {
     public class FormViewModel : INotifyPropertyChanged
     {
-        private const string URL = @"https://cashessentials.org/publications/";
-        private int _pageCounter = 1;
+        private const string BaseUrl = @"https://habr.com/ru/";
+        private int _pageCounter;
 
         private string _input;
-
+        
         public string Input
         {
             get => _input;
@@ -24,7 +25,19 @@ namespace WpfApplication1.Models
             }
         }
 
-        
+        private string _pages;
+
+        public string Pages
+        {
+            get => _pages;
+            set
+            {
+                _pages = value;
+                OnPropertyChanged("Pages");
+            }
+        }
+
+
         public ObservableCollection<NewsViewModel> News { get; set; } = new ObservableCollection<NewsViewModel>();
 
         private NewsViewModel _selectedNews;
@@ -39,34 +52,46 @@ namespace WpfApplication1.Models
             }
         }
 
-        private void LoadData(string url = URL)
+        private readonly Parser _parser;
+    
+        public FormViewModel()
         {
-            HtmlWeb web = new HtmlWeb();
-            var html = web.Load(url);
-            var document = html.DocumentNode;
+            _parser =  new Parser(BaseUrl);;
+            LoadData();
+        }
+        
+        private void LoadData()
+        {
+            _parser.Load($"page{++_pageCounter}/");
+            var document = _parser.Document;
+
+            var pagination = document.QuerySelector("ul.toggle-menu_pagination");
             
-            foreach(var item in document.QuerySelectorAll("a.quicklink"))
+            Pages = "Your upload: " + _pageCounter + ", total: " + pagination
+                ?.QuerySelector("a.toggle-menu__item-link_bordered")
+                ?.Attributes["href"]
+                ?.Value
+                ?.Substring(8).TrimEnd('/');
+        
+            foreach(var item in document.QuerySelectorAll("article.post"))
             {
+                var postHeader = item.QuerySelector("header.post__meta");
+                var postText = item.QuerySelector("div.post__text").QuerySelectorAll("p");
+                var description = postText.Aggregate("", (current, node) => current + "\n" + node.InnerHtml);
+                
                 News.Add(new NewsViewModel
                 {
-                    Author = item.QuerySelector("div.quicklink__author")?.InnerHtml ?? "starts",
-                    Date = item.QuerySelector("div.quicklink__date")?.InnerText ?? "null",
-                    Description = item.QuerySelector("div.quicklink__catchphrase")?.InnerHtml ?? "null",
-                    Link = item.Attributes["href"]?.Value ?? "null",
-                    Title = item.QuerySelector("div.quicklink__title")?.InnerText ?? "null"
+                    Author = postHeader.QuerySelector("a.post__user-info").Attributes["href"]?.Value ?? "null",
+                    Date = postHeader.QuerySelector("span.post__time")?.InnerHtml ?? "null",
+                    Title = item.QuerySelector("a.post__title_link")?.InnerHtml ?? "null",
+                    Description = description,
+                    Link = item.QuerySelector("div.post__body")?.QuerySelector("a.btn")?.Attributes["href"]?.Value ?? "null"
                 });
             }
         }
 
-        public FormViewModel()
-        {
-            LoadData();
-        }
+        public RelayCommand NextPage => new RelayCommand(obj => { LoadData(); });
         
-        public RelayCommand NextPage =>
-            new RelayCommand(obj => { LoadData(URL + $"page/{++_pageCounter}/"); });
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
