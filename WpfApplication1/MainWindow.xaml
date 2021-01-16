@@ -5,23 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApplication1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="1200">
+        WindowState="Maximized"
+        Title="Habr parser">
     <Grid>
-        <DataGrid  RowHeight="60"  AutoGenerateColumns="False" ItemsSource="{Binding News}">
+        <DataGrid Width="1200" HorizontalAlignment="Left"  RowHeight="60"  AutoGenerateColumns="False" ItemsSource="{Binding News}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Title"  Binding="{Binding Title}"/>
-                <DataGridTextColumn Width="500" Header="Description" Binding="{Binding Description}">
+                <DataGridTextColumn Width="300"  Header="Title"  Binding="{Binding Title}">
                     <DataGridTextColumn.ElementStyle>
-                        <Style>                            
+                        <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridHyperlinkColumn  Header="Link" Binding="{Binding Link}" />
-                <DataGridTextColumn Header="Author" Binding="{Binding Author}" />
+                <DataGridTextColumn Width="583" Header="Description" Binding="{Binding Description}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridHyperlinkColumn Width="100"  Header="Link" Binding="{Binding Link}" />
+                <DataGridHyperlinkColumn Width="100" Header="Author" Binding="{Binding Author}" />
                 <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding NextPage}" Width="30" Height="20" Margin="10 200 10 10">Next Page</Button>
+        <Label 
+            HorizontalAlignment="Right" 
+            VerticalAlignment="Top"
+            Width="330"
+            Content="{Binding Pages}"
+            FontWeight="Bold"
+            />
+        <Button 
+            HorizontalAlignment="Right" 
+            Command="{Binding NextPage}" 
+            VerticalAlignment="Top"
+            Margin="0 30 0 0"
+            Height="40"
+            Width="336"
+        >
+            Next Page
+        </Button>
     </Grid>
 </Window>
