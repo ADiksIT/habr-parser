@@ -64,28 +64,26 @@ namespace WpfApplication1.Models
         {
             _parser.Load($"page{++_pageCounter}/");
             var document = _parser.Document;
-
-            var pagination = document.QuerySelector("ul.toggle-menu_pagination");
             
-            Pages = "Your upload: " + _pageCounter + ", total: " + pagination
-                ?.QuerySelector("a.toggle-menu__item-link_bordered")
-                ?.Attributes["href"]
-                ?.Value
-                ?.Substring(8).TrimEnd('/');
+            var pagination = Parser.Qs(document, "ul.toggle-menu_pagination", true);
+
+            Pages = "Your upload: " + _pageCounter + ", total: " +
+                    Parser.QsAttr(pagination, "a.toggle-menu__item-link_bordered", "href")
+                          ?.Substring(8).TrimEnd('/');
         
             foreach(var item in document.QuerySelectorAll("article.post"))
             {
-                var postHeader = item.QuerySelector("header.post__meta");
-                var postText = item.QuerySelector("div.post__text").QuerySelectorAll("p");
+                var postHeader = Parser.Qs(item, "header.post__meta", true);
+                var postText = Parser.Qs(item, "div.post__text", true).QuerySelectorAll("p");
                 var description = postText.Aggregate("", (current, node) => current + "\n" + node.InnerHtml);
                 
                 News.Add(new NewsViewModel
                 {
-                    Author = postHeader.QuerySelector("a.post__user-info").Attributes["href"]?.Value ?? "null",
-                    Date = postHeader.QuerySelector("span.post__time")?.InnerHtml ?? "null",
-                    Title = item.QuerySelector("a.post__title_link")?.InnerHtml ?? "null",
+                    Author = Parser.QsAttr(postHeader, "a.post__user-info", "href"),
+                    Date = Parser.Qs(postHeader, "span.post__time"),
+                    Title = Parser.Qs(item, "a.post__title_link"),
                     Description = description,
-                    Link = item.QuerySelector("div.post__body")?.QuerySelector("a.btn")?.Attributes["href"]?.Value ?? "null"
+                    Link = Parser.QsAttr(Parser.Qs(item, "div.post__body", true), "a.btn", "href")
                 });
             }
         }
