@@ -33,7 +33,7 @@ namespace WpfApplication1.Services
         /// <param name="selector">The selector we're looking for</param>
         /// <returns>Html content of node or "without data"</returns>
         public static string Qs(HtmlNode node, string selector) =>
-            node.QuerySelector(selector)?.InnerHtml ?? "without data";
+            node?.QuerySelector(selector)?.InnerHtml ?? "without data";
 
         /// <summary>
         /// Helper function, wrapper on QuerySelector
@@ -43,7 +43,7 @@ namespace WpfApplication1.Services
         /// <param name="isNode">checker for overload methods</param>
         /// <returns>HtmlNode element</returns>
         public static HtmlNode Qs(HtmlNode node, string selector, bool isNode) =>
-            node.QuerySelector(selector);
+            node?.QuerySelector(selector);
         
         /// <summary>
         /// Methods find of node special attribute
@@ -62,6 +62,6 @@ namespace WpfApplication1.Services
         /// <param name="selector">The selector we're looking for</param>
         /// <returns>Collection found nodes</returns>
         public static IEnumerable<HtmlNode> QsAll(HtmlNode node, string selector) =>
-            node.QuerySelectorAll(selector);
+            node?.QuerySelectorAll(selector);
     }
 }
