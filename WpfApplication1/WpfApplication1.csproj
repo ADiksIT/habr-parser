@@ -62,6 +62,8 @@
             <Generator>MSBuild:Compile</Generator>
             <SubType>Designer</SubType>
         </ApplicationDefinition>
+        <Compile Include="Properties\Annotations.cs" />
+        <Compile Include="Services\HabrParser.cs" />
         <Compile Include="Services\Parser.cs" />
         <Page Include="MainWindow.xaml">
             <Generator>MSBuild:Compile</Generator>

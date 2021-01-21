@@ -8,7 +8,16 @@
         WindowState="Maximized"
         Title="Habr parser">
     <Grid>
-        <DataGrid Width="1200" HorizontalAlignment="Left"  RowHeight="60"  AutoGenerateColumns="False" ItemsSource="{Binding News}">
+        <Label 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Top"
+            Width="330"
+            Height="40"
+            Content="{Binding PostCount}"
+            FontWeight="Bold"
+            Margin="10"
+        />
+        <DataGrid Width="1200" HorizontalAlignment="Left" Margin="0 40  0 0"  RowHeight="60"  AutoGenerateColumns="False" ItemsSource="{Binding News}">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="300"  Header="Title"  Binding="{Binding Title}">
                     <DataGridTextColumn.ElementStyle>
